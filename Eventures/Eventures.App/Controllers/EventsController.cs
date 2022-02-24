@@ -24,10 +24,11 @@ namespace Eventures.App.Controllers
         {
             return View();
         }
-        public IActionResult All()
+        public IActionResult All(string searchString)
         {
             List<EventAllViewModel> events = context.Events.Select(eventFromDb => new EventAllViewModel
             {
+                Id = eventFromDb.Id,
                 Name = eventFromDb.Name,
                 Place = eventFromDb.Place,
                 Start = eventFromDb.Start.ToString("dd-MMM-yyyy HH:mm", CultureInfo.InvariantCulture),
@@ -35,6 +36,10 @@ namespace Eventures.App.Controllers
                 Owner = eventFromDb.Owner.UserName
             })
                 .ToList();
+            if(!String.IsNullOrEmpty(searchString))
+            {
+                events = events.Where(s => s.Place.Contains(searchString)).ToList();
+            }
             return this.View(events);
         }
         public IActionResult Create()
